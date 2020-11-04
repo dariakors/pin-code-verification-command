@@ -3,6 +3,7 @@ import unittest
 from card import Card
 from parameterized import parameterized
 
+
 CLA = '20'
 INS = 'A4'
 
