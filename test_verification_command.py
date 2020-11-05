@@ -40,7 +40,15 @@ class Tests(unittest.TestCase):
     @parameterized.expand([
         ['00', '00', 'EF08', '6986'],  # incorrect P2 parameter, because data will be sent
         ['01', '01', 'EF08', '6986'],  # incorrect P1 parameter, because P1='01' is RFU
+        ['ewrwer', '01', 'EF08', '6986'],  # incorrect P1 parameter
+        ['', '01', 'EF08', '6986'],  # incorrect P1 parameter
+        ['   ', '01', 'EF08', '6986'],  # incorrect P1 parameter
+        ['%^', '01', 'EF08', '6986'],  # incorrect P1 parameter
         ['00', '900', 'EF08', '6986'],  # incorrect P2 parameter
+        ['00', 'ewrwer', 'EF08', '6986'],  # incorrect P2 parameter
+        ['00', '', 'EF08', '6986'],  # incorrect P2 parameter
+        ['00', '   ', 'EF08', '6986'],  # incorrect P2 parameter
+        ['00', '%^', 'EF08', '6986'],  # incorrect P2 parameter
     ])
     def test_incorrect_parameters_p1_and_p2(self, p1, p2, pin, result):
         card = Card()
@@ -195,6 +203,19 @@ class Tests(unittest.TestCase):
         card = Card()
         header = CLA + INS + p1 + p2
         lc = "{:02X}".format(len(bytes.fromhex(pin)))
+        response = card.send(header + lc + pin)
+        self.assertEqual(response, result)
+
+    @parameterized.expand([
+        ['00', '01', '', '6300'],  # valid global pincode
+        ['00', '01', 'JJJJJlklklk', '6A80'],  # valid specific pincode
+        ['00', '01', '       ', '6A80'],  # valid specific pincode
+        ['00', '01', '%^', '6A80'],  # valid specific pincode
+    ])
+    def test_incorrect_values_of_pin(self, p1, p2, pin, result):
+        card = Card()
+        header = CLA + INS + p1 + p2
+        lc = "{:02X}".format(len(pin.encode()))
         response = card.send(header + lc + pin)
         self.assertEqual(response, result)
 
