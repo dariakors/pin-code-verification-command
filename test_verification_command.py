@@ -207,10 +207,10 @@ class Tests(unittest.TestCase):
         self.assertEqual(response, result)
 
     @parameterized.expand([
-        ['00', '01', '', '6300'],  # valid global pincode
-        ['00', '01', 'JJJJJlklklk', '6A80'],  # valid specific pincode
-        ['00', '01', '       ', '6A80'],  # valid specific pincode
-        ['00', '01', '%^', '6A80'],  # valid specific pincode
+        ['00', '01', '', '6300'],  # empty string
+        ['00', '01', 'JJJJJlklklk', '6A80'],  # letters
+        ['00', '01', '       ', '6A80'],  # spaces
+        ['00', '01', '%^', '6A80'],  # special symbols
     ])
     def test_incorrect_values_of_pin(self, p1, p2, pin, result):
         card = Card()
